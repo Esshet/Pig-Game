@@ -5,6 +5,9 @@ const score1El = document.getElementById('score--1');
 const current0El = document.getElementById('current--1');
 const current1El = document.getElementById('current--2');
 const holdButton = document.querySelector('.btn--hold');
+const turnPlayer1 = document.querySelector('.player--0');
+const turnPlayer2 = document.querySelector('.player--1');
+const resetButton = document.querySelector('.btn--new');
 
 const diceEl = document.querySelector('.dice');
 const diceRoll = document.querySelector('.btn--roll');
@@ -24,6 +27,13 @@ const Reset = function () {
   score1El.textContent = currentScore;
   current1El.textContent = 0;
 };
+const newGame = function () {
+  current0El.textContent = 0;
+  score0El.textContent = 0;
+  current1El.textContent = 0;
+  score1El.textContent = 0;
+  currentScore = 0;
+};
 
 const Winner = function () {
   if (score0El.textContent >= 30) {
@@ -42,9 +52,14 @@ const changeTurn = function () {
   if (playerTurn === 1) {
     console.log('player 1');
     playerTurn = 2;
+    turnPlayer2.classList.add('player--active');
+    turnPlayer1.classList.remove('player--active');
   } else {
     console.log('player 2');
     playerTurn = 1;
+
+    turnPlayer2.classList.remove('player--active');
+    turnPlayer1.classList.add('player--active');
   }
 };
 
@@ -71,7 +86,7 @@ diceRoll.addEventListener('click', function () {
 holdButton.addEventListener('click', function () {
   if (playerTurn === 1) {
     score0El.textContent = Number(score0El.textContent) + currentScore;
-    //score0El.textContent += currentScore;
+
     current0El.textContent = 0;
     currentScore = 0;
     Winner();
@@ -83,4 +98,12 @@ holdButton.addEventListener('click', function () {
     Winner();
     changeTurn();
   }
+});
+resetButton.addEventListener('click', function () {
+  newGame();
+  if (playerTurn === 2) {
+    turnPlayer2.classList.remove('player--active');
+    turnPlayer1.classList.add('player--active');
+  }
+  playerTurn = 1;
 });

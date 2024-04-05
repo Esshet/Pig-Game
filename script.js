@@ -119,7 +119,7 @@ resetButton.addEventListener('click', function () {
     turnPlayer2.classList.remove('player--active');
     turnPlayer1.classList.add('player--active');
   } else {
-    turnPlayer1.classList.toggle('player--winner');
+    turnPlayer1.classList.remove('player--winner');
   }
   playerTurn = 1;
   playing = true;

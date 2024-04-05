@@ -20,13 +20,20 @@ let currentScore = 0;
 let playerScore1 = 0;
 let playerScore2 = 0;
 let playerTurn = 1;
+let playing = true;
 
 const Reset = function () {
   score0El.textContent = currentScore;
   current0El.textContent = 0;
   score1El.textContent = currentScore;
   current1El.textContent = 0;
+  if (score0El.classList.contains('player--winner')) {
+    score0El.classList.remove('player--winner');
+  } else {
+    score1El.classList.toggle('player--winner');
+  }
 };
+
 const newGame = function () {
   current0El.textContent = 0;
   score0El.textContent = 0;
@@ -37,14 +44,15 @@ const newGame = function () {
 
 const Winner = function () {
   if (score0El.textContent >= 30) {
+    turnPlayer1.classList.toggle('player--winner');
     audio.play();
-    setTimeout(alert('Player 1 won!!!'), 100);
-    Reset();
-  } else if (score1El.textContent >= 30) {
-    audio.play();
-    setTimeout(alert('Player 2 won!!!'), 100);
 
-    Reset();
+    playing = false;
+  } else if (score1El.textContent >= 30) {
+    turnPlayer2.classList.toggle('player--winner');
+    audio.play();
+
+    playing = false;
   }
 };
 
@@ -64,46 +72,55 @@ const changeTurn = function () {
 };
 
 diceRoll.addEventListener('click', function () {
-  const random = Math.floor(Math.random() * 6) + 1;
-  diceEl.classList.remove('hidden');
-  diceEl.src = `dice-${random}.png`;
+  if (playing) {
+    const random = Math.floor(Math.random() * 6) + 1;
+    diceEl.classList.remove('hidden');
+    diceEl.src = `dice-${random}.png`;
 
-  if (random !== 1) {
-    currentScore += random;
-    document.getElementById(`current--${playerTurn}`).textContent =
-      currentScore;
-  } else {
-    if (playerTurn === 2) {
-      document.getElementById(`current--1`).textContent = 0;
-      document.getElementById(`current--2`).textContent = 0;
+    if (random !== 1) {
+      currentScore += random;
+      document.getElementById(`current--${playerTurn}`).textContent =
+        currentScore;
+    } else {
+      if (playerTurn === 2) {
+        document.getElementById(`current--1`).textContent = 0;
+        document.getElementById(`current--2`).textContent = 0;
+      }
+      currentScore = 0;
+
+      changeTurn();
     }
-    currentScore = 0;
-
-    changeTurn();
   }
 });
 
 holdButton.addEventListener('click', function () {
-  if (playerTurn === 1) {
-    score0El.textContent = Number(score0El.textContent) + currentScore;
+  if (playing) {
+    if (playerTurn === 1) {
+      score0El.textContent = Number(score0El.textContent) + currentScore;
 
-    current0El.textContent = 0;
-    currentScore = 0;
-    Winner();
-    changeTurn();
-  } else {
-    score1El.textContent = Number(score1El.textContent) + currentScore;
-    current1El.textContent = 0;
-    currentScore = 0;
-    Winner();
-    changeTurn();
+      current0El.textContent = 0;
+      currentScore = 0;
+      Winner();
+      changeTurn();
+    } else {
+      score1El.textContent = Number(score1El.textContent) + currentScore;
+      current1El.textContent = 0;
+      current0El.textContent = 0;
+      currentScore = 0;
+      Winner();
+      changeTurn();
+    }
   }
 });
 resetButton.addEventListener('click', function () {
   newGame();
-  if (playerTurn === 2) {
+  if (turnPlayer2.classList.contains('player--winner')) {
+    turnPlayer2.classList.toggle('player--winner');
     turnPlayer2.classList.remove('player--active');
     turnPlayer1.classList.add('player--active');
+  } else {
+    turnPlayer1.classList.toggle('player--winner');
   }
   playerTurn = 1;
+  playing = true;
 });
